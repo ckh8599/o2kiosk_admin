@@ -3,7 +3,6 @@ import { NavController } from 'ionic-angular';
 
 import { Item } from '../../properties/Item';
 import { Order } from '../../properties/Order';
-import { CdTimerModule } from 'angular-cd-timer';
 
 @Component({
   selector: 'page-home',
@@ -44,6 +43,7 @@ export class HomePage {
     this.order.items = this.items;
     this.order.check = "main-back";
     this.order.countDown = "";
+    this.order.startTimer();
 
     this.orderList.push(this.order);
 
@@ -63,15 +63,21 @@ export class HomePage {
     this.order.items = this.items;
     this.order.check = "main-back";
     this.order.countDown = "";
+    this.order.startTimer();
 
     this.orderList.push(this.order);
 
     console.log(this.orderList);
+    
 
   }
 
+  
+
+  //확인
   confirm(order){
     order.check = "side-back";
+    clearInterval(order.interval);
     console.log(order);
   }
 
