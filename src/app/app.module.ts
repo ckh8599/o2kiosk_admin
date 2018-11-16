@@ -6,7 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { CountdownModule } from 'ngx-countdown';
+import { CdTimerModule } from 'angular-cd-timer';
 
 @NgModule({
   declarations: [
@@ -15,7 +15,7 @@ import { CountdownModule } from 'ngx-countdown';
   ],
   imports: [
     BrowserModule,
-    CountdownModule,
+    CdTimerModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],

@@ -9,37 +9,17 @@
 <ion-content padding>
   <ion-list>
     
-    <ion-item>
+    <ion-item *ngFor="let order of orderList; let i = index" color="{{order.check}}">
       <ion-avatar item-start>
         <div>
-        54354
+        {{order.orderId}}
         </div>
       </ion-avatar>
-      <h2>카페라떼 3개</h2>
-      <h2>카페라떼 2개</h2>
-      <button ion-button color="menu-back" item-end outline>
+      <h2 *ngFor="let item of order.items">{{item.title}} {{item.count}}개</h2>
+      <button ion-button color="menu-back" item-end outline (click)="confirm(order)">
+        {{item.countDown}}
         
       </button>
-    </ion-item>
-
-    <ion-item>
-      <ion-avatar item-start>
-        <div>
-          54354
-        </div>
-      </ion-avatar>
-      <h2>카페라떼 9개</h2>
-      <button ion-button color="menu-back" item-end outline>10:40</button>
-    </ion-item>
-
-    <ion-item>
-      <ion-avatar item-start>
-        <div>
-          54354
-        </div>
-      </ion-avatar>
-      <h2>카페라떼 1개</h2>
-      <button ion-button color="menu-back" item-end outline>10:40</button>
     </ion-item>
 
   </ion-list>
