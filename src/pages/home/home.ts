@@ -78,7 +78,14 @@ export class HomePage {
   confirm(order){
     order.check = "side-back";
     clearInterval(order.interval);
+    this.playAudio();
     console.log(order);
   }
 
+  playAudio(){
+    let audio = new Audio();
+    audio.src = "/assets/audio/ddiding.wav";
+    audio.load();
+    audio.play();
+  }
 }
