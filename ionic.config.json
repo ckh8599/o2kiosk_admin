@@ -1,5 +1,7 @@
 {
   "name": "o2kiosk_admin",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "ionic-angular"
 }
