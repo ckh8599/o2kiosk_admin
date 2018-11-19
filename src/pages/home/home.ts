@@ -65,6 +65,9 @@ export class HomePage {
       this.order.countDown = "";
 
       this.orderList.push(this.order);
+
+      //사운드
+      this.playAudio();
     }
   }
 
@@ -82,8 +85,18 @@ export class HomePage {
     return ret;
   }
 
+  //확인
   confirm(order){
     order.check = "side-back";
+    clearInterval(order.interval);
+    this.playAudio();
     console.log(order);
+  }
+
+  playAudio(){
+    let audio = new Audio();
+    audio.src = "/assets/audio/ddiding.wav";
+    audio.load();
+    audio.play();
   }
 }

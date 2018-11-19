@@ -17,7 +17,7 @@
       </ion-avatar>
       <h2 *ngFor="let item of order.items">{{item.title}} {{item.count}}개</h2>
       <button ion-button color="menu-back" item-end outline (click)="confirm(order)">
-        {{item.countDown}}
+        {{order.mPath}} 분 {{order.sPath}} 초
         
       </button>
     </ion-item>
