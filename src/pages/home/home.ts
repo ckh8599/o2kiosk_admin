@@ -64,8 +64,11 @@ export class HomePage {
       this.order.check = "main-back";
       this.order.countDown = "";
 
-      this.orderList.push(this.order);
+      //시간초기화
+      this.order.startTimer();
 
+      this.orderList.push(this.order);
+      
       //사운드
       this.playAudio();
     }
