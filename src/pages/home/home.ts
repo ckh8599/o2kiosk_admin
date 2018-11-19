@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
-import { CountdownModule } from 'ngx-countdown';
+import { Item } from '../../properties/Item';
+import { Order } from '../../properties/Order';
 
 @Component({
   selector: 'page-home',
@@ -9,7 +10,18 @@ import { CountdownModule } from 'ngx-countdown';
 })
 export class HomePage {
 
+  item: Item;
+  items: Array<Item>;
+
+  order: Order;
+  orderList: Array<Order>;
+
   constructor(public navCtrl: NavController) {
+    //주문목록 초기화
+    this.orderList = new Array<Order>();
+    //주문번호 초기화
+    this.orderNum = 0;
+    
     //웹소켓 오픈
     this.openWebsocket();
   }
@@ -31,9 +43,47 @@ export class HomePage {
       console.log("!!!!! Error !!!!!");
     }
 
-    this.webSocket.onmessage = function(message){
-      console.log("message : " + message.data);
+    this.webSocket.onmessage = (message) => {
+      console.log("receive data : " + message.data);
+
+      var list = JSON.parse(message.data);
+      
+      this.items = new Array<Item>();
+      for (let data of list) {
+        this.item = new Item();
+        this.item.id = data.id;
+        this.item.title = data.title;
+        this.item.count = data.count;
+        this.item.price = data.price;
+        this.items.push(this.item);
+      }
+
+      this.order = new Order();
+      this.order.orderId = this.makeOrderNum();
+      this.order.items = this.items;
+      this.order.check = "main-back";
+      this.order.countDown = "";
+
+      this.orderList.push(this.order);
     }
   }
 
+  //주문번호 반환
+  orderNum : number;
+  makeOrderNum(){
+    this.orderNum++;
+    
+    let num = this.orderNum + '';
+    let ret = num.length == 4 ? num : new Array(4-num.length+1).join('0') + num;
+
+    if(num == "9999"){
+      this.orderNum = 0;
+    }
+    return ret;
+  }
+
+  confirm(order){
+    order.check = "side-back";
+    console.log(order);
+  }
 }
