@@ -31,46 +31,56 @@ export class HomePage {
   openWebsocket(){
     this.webSocket  = new WebSocket("ws://110.45.199.181:8002/WS?token=MY_STORE&id=ADMIN");
     
-    this.webSocket.onopen = function(message){
-      console.log("===== OPEN =====");
+    this.webSocket.onopen = function(event){
+      console.log("["+ event.type +"] connected!");
     }
 
-    this.webSocket.onclose = function(message){
-      console.log("===== CLOSE =====");
+    this.webSocket.onclose = function(event){
+      console.log("["+ event.type +"] disconnected!");
     }
 
-    this.webSocket.onerror = function(message){
-      console.log("!!!!! Error !!!!!");
+    this.webSocket.onerror = function(event){
+      console.log("["+ event.type +"]");
     }
 
-    this.webSocket.onmessage = (message) => {
-      console.log("receive data : " + message.data);
-
-      var list = JSON.parse(message.data);
+    this.webSocket.onmessage = (event) => {
+      console.log("["+ event.type +"] " + event.data);
       
-      this.items = new Array<Item>();
-      for (let data of list) {
-        this.item = new Item();
-        this.item.id = data.id;
-        this.item.title = data.title;
-        this.item.count = data.count;
-        this.item.price = data.price;
-        this.items.push(this.item);
+      let data = JSON.parse(event.data);
+      if(data.code == "0"){
+        let type = data.param.type;
+        let list = data.param.items;
+
+        if(type == "ORDER"){
+          this.items = new Array<Item>();
+          for (let prod of list) {
+            this.item = new Item();
+            this.item.id = prod.id;
+            this.item.title = prod.title;
+            this.item.count = prod.count;
+            this.item.price = prod.price;
+            this.items.push(this.item);
+          }
+          
+          this.order = new Order();
+          this.order.orderId = this.makeOrderNum();
+          this.order.items = this.items;
+          this.order.check = "main-back";
+          this.order.countDown = "";
+
+          //시간초기화
+          this.order.startTimer();
+          
+          //주문입력
+          this.orderList.push(this.order);
+            
+          //알림 사운드
+          this.playAudio();
+        }
+      }else{
+        alert(data.msg);
+        return;
       }
-
-      this.order = new Order();
-      this.order.orderId = this.makeOrderNum();
-      this.order.items = this.items;
-      this.order.check = "main-back";
-      this.order.countDown = "";
-
-      //시간초기화
-      this.order.startTimer();
-
-      this.orderList.push(this.order);
-      
-      //사운드
-      this.playAudio();
     }
   }
 
@@ -81,7 +91,7 @@ export class HomePage {
     
     let num = this.orderNum + '';
     let ret = num.length == 4 ? num : new Array(4-num.length+1).join('0') + num;
-
+    
     if(num == "9999"){
       this.orderNum = 0;
     }
@@ -96,6 +106,7 @@ export class HomePage {
     console.log(order);
   }
 
+  //사운드
   playAudio(){
     let audio = new Audio();
     audio.src = "/assets/audio/ddiding.wav";
