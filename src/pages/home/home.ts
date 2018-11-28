@@ -35,12 +35,15 @@ export class HomePage {
       console.log("["+ event.type +"] connected!");
     }
 
-    this.webSocket.onclose = function(event){
+    this.webSocket.onclose = (event) => {
       console.log("["+ event.type +"] disconnected!");
+      if(confirm("서버접속이 끊겼습니다. 재접속 하시겠습니까?")){
+        this.openWebsocket();
+      }
     }
 
     this.webSocket.onerror = function(event){
-      console.log("["+ event.type +"]");
+      console.log("["+ event.type +"] failed!");
     }
 
     this.webSocket.onmessage = (event) => {
