@@ -4,6 +4,8 @@ import { NavController } from 'ionic-angular';
 import { Item } from '../../properties/Item';
 import { Order } from '../../properties/Order';
 
+import { setWsHeartbeat } from "ws-heartbeat/client";
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -29,7 +31,7 @@ export class HomePage {
   //WebSocket 오픈
   webSocket : WebSocket;
   openWebsocket(){
-    this.webSocket  = new WebSocket("ws://110.45.199.181:8002/WS?token=MY_STORE&id=ADMIN");
+    this.webSocket = new WebSocket("ws://110.45.199.181:8002/WS?token=MY_STORE&id=ADMIN");
     
     this.webSocket.onopen = function(event){
       console.log("["+ event.type +"] connected!");
@@ -37,9 +39,12 @@ export class HomePage {
 
     this.webSocket.onclose = (event) => {
       console.log("["+ event.type +"] disconnected!");
-      if(confirm("서버접속이 끊겼습니다. 재접속 하시겠습니까?")){
+      
+      //5초 후 자동 재연결시도 (실패시 다시 호출되므로 5초에 한번씩 연결시도함.)
+      setTimeout(this.openWebsocket(), 5000);
+      /*if(confirm("서버접속이 끊겼습니다. 재접속 하시겠습니까?")){
         this.openWebsocket();
-      }
+      }*/
     }
 
     this.webSocket.onerror = function(event){
@@ -80,11 +85,19 @@ export class HomePage {
           //알림 사운드
           this.playAudio();
         }
+      }else if(data.code == "100"){
+        //pong 반환완료
       }else{
         alert(data.msg);
         return;
       }
     }
+
+    //ping-pong
+    setWsHeartbeat(this.webSocket, "ping", {
+      pingTimeout: 60000, // 60초동안 서버로부터 응답이 없으면 연결종료 처리
+      pingInterval: 30000 // 매 30초마다 ping 메시지를 서버에 전송
+    });
   }
 
   //주문번호 반환
