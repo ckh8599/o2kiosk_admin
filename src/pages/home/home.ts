@@ -27,7 +27,7 @@ export class HomePage {
     //웹소켓 오픈
     this.openWebsocket();
   }
-
+  
   //WebSocket 오픈
   webSocket : WebSocket;
   openWebsocket(){
@@ -41,7 +41,9 @@ export class HomePage {
       console.log("["+ event.type +"] disconnected!");
       
       //5초 후 자동 재연결시도 (실패시 다시 호출되므로 5초에 한번씩 연결시도함.)
-      setTimeout(this.openWebsocket(), 5000);
+      setTimeout(() => {
+        this.openWebsocket();
+      }, 5000);
       /*if(confirm("서버접속이 끊겼습니다. 재접속 하시겠습니까?")){
         this.openWebsocket();
       }*/
