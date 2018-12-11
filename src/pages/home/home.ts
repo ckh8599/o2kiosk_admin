@@ -33,6 +33,9 @@ export class HomePage {
   openWebsocket(){
     this.webSocket = new WebSocket("ws://110.45.199.181:8002/WS?token=MY_STORE&id=ADMIN");
     
+    //웹소켓 연결시간에 일정시간 이상 소요되면 연결끊기
+    this.connectionTimeOut();
+
     this.webSocket.onopen = function(event){
       console.log("["+ event.type +"] connected!");
     }
@@ -44,9 +47,6 @@ export class HomePage {
       setTimeout(() => {
         this.openWebsocket();
       }, 5000);
-      /*if(confirm("서버접속이 끊겼습니다. 재접속 하시겠습니까?")){
-        this.openWebsocket();
-      }*/
     }
 
     this.webSocket.onerror = function(event){
@@ -130,5 +130,26 @@ export class HomePage {
     audio.src = "/assets/audio/ddiding.wav";
     audio.load();
     audio.play();
+  }
+
+  //웹소켓 연결시간 초과확인 (10초)
+  async connectionTimeOut() {
+    let time = 0;
+    let interval = setInterval(() => {
+      if(this.webSocket.readyState == WebSocket.CONNECTING){
+        ++time;
+        console.log(time);
+
+        if(time > 10){
+          console.log("over 10 sec!");
+          if(this.webSocket.readyState == WebSocket.CONNECTING){
+            this.webSocket.close();
+          }
+          clearInterval(interval); 
+        }
+      }else{
+        clearInterval(interval);
+      }
+    }, 1000);
   }
 }
